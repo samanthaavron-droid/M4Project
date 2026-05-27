@@ -1,1 +1,2 @@
 # M4Project
+The geometry of the level consists of boxes randomly lying on the grass, some barrels near the containers and a few open and closed containers on the side
