@@ -9,6 +9,7 @@ public class Movement : MonoBehaviour
     [SerializeField] private InputActionReference runAction;
     [SerializeField] private float playerSpeed;
     [SerializeField] private float runningMultiplier;
+    [SerializeField] private float jumpHeight;
 
     [Header("Camera")]
     [SerializeField] private InputActionReference cameraAction;
@@ -16,6 +17,8 @@ public class Movement : MonoBehaviour
     [SerializeField] private float cameraSensitivity;
 
     private Rigidbody rb;
+    private CharacterController cc;
+    private Animator animator;
 
     private Vector3 inputDir;
     private Vector3 cameraDir;
@@ -24,6 +27,8 @@ public class Movement : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        cc = GetComponent<CharacterController>();
+        animator = GetComponent<Animator>();
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -65,7 +70,9 @@ public class Movement : MonoBehaviour
 
         Vector3 smoothVelocity = Vector3.Lerp(currentVelocity, targetVelocity, Time.deltaTime * 10f);
         smoothVelocity.y = currentY;
+        //cc.Move(smoothVelocity);
         rb.linearVelocity = smoothVelocity;
+        animator.SetFloat("speed", smoothVelocity.magnitude);
     }
     private void CameraMovement(Vector2 dir)
     {
@@ -88,9 +95,10 @@ public class Movement : MonoBehaviour
     }
     private void Jump(InputAction.CallbackContext obj)
     {
-        if (Physics.CheckSphere(transform.position, 1f, LayerMask.GetMask("Ground")))
+        if (Physics.CheckSphere(transform.position, 1.5f, LayerMask.GetMask("Ground")))
         {
-            rb.AddForce(Vector3.up * 10f, ForceMode.Impulse);
+            rb.AddForce(Vector3.up * jumpHeight, ForceMode.Impulse);
+            animator.SetTrigger("Jump");
         }
     }
     private void OnEnable()
